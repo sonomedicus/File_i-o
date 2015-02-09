@@ -7,19 +7,26 @@ import java.util.Scanner;
 
 public class ScoreTrakker {
     private ArrayList<Student> students = new ArrayList<Student>();
-    private String[] files = {"scores.txt","badscore.txt","nofile.txt"};
-    public void loadDataFromFile(String fileName) throws FileNotFoundException {
+    private String[] files = {"scores.txt","badscore.txt","nofile.txt","badname.txt"};
+    
+    public void loadDataFromFile(String fileName) throws Exception {
     	FileReader read = new FileReader(fileName);
     	Scanner in = new Scanner(read);
     	
     	String name = null;
     	String strscore = "";
-    	
+    	char space = ' ';
+    	int has_full_name;
     	int score = 0;
+    	
     	while(in.hasNextLine()){
     	  
     	   try{ 
     		   name = in.nextLine();
+    		   has_full_name = name.indexOf(space);
+    		   if(has_full_name == -1){
+    			   throw new incorrectNameException(name);
+    		   }
         	   strscore = in.nextLine();
     	       score = Integer.parseInt(strscore);
     	       Student student = new Student(name,score);
@@ -46,13 +53,16 @@ public class ScoreTrakker {
     
     public void processFiles()  {
     	try{
-    	 loadDataFromFile("nofile.txt");
-    	 printInOrder();
+    	  loadDataFromFile("badname.txt");
+    	  printInOrder();
     	}catch(FileNotFoundException e){
     		System.out.println("file " + files[2] + " not found");
+    	} catch(Exception e){
+    		
+    		System.out.println(e.getMessage());
     	}
     }
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args)  {
     	ScoreTrakker score = new ScoreTrakker();
     	score.processFiles();
     }
